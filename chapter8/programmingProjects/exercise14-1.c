@@ -1,22 +1,36 @@
 #include <stdio.h>
-#include <ctype.h>
-#define MAX_SENTENCE_LENGTH 100
 
-int main(void){
-	char sentence[MAX_SENTENCE_LENGTH] = {0};
-	char r_sentence[MAX_SENTENCE_LENGTH] = {0};
-	int c = 0, i = 0, j = 0, k = 0, w_start, w_end, s_length;
+#define MAX_VALUE 100
 
-	printf("Enter a sentence: ");
-	while((sentence[i++] = getchar()) != '\n');
-	// Set length of string
-	s_length = i - 1;
-	
-	// Reverse sentence words
-	for(;;){
+int main(void) {
 
-	}	
+    int i = 0,
+        j;
+    char c, 
+         terminating_char,
+         words[MAX_VALUE] = {0};
 
-	return 0;
+    printf("Enter a sentence: ");
+    for (i = 0; (c = getchar()) != '\n' && i < MAX_VALUE; i++) {
+        if (c == '.' || c == '!' || c == '?') {
+            terminating_char = c;
+            break;
+        }
+        words[i] = c;
+    }
+
+    printf("Reversal of sentence: ");
+    while (i >= 0) {
+        while (words[--i] != ' ' && i != 0)
+            ;
+        j = i == 0 ? 0 : i + 1;
+        while (words[j] != ' ' && words[j] != '\0')
+            putchar(words[j++]);
+        if (i >= 0)
+            putchar(' ');
+    }
+
+    printf("\b%c\n", terminating_char);
+
+    return 0;
 }
-
