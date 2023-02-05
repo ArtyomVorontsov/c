@@ -9,9 +9,6 @@
 /* external variables */
 int num_in_rank[NUM_RANKS];
 int num_in_suit[NUM_SUITS];
-
-int hand[NUM_CARDS][2] = {{0}};
-
 bool straight, flush, four, three;
 int pairs; /* can be 0, 1 or 2 */
 
@@ -21,7 +18,6 @@ void analyze_hand(void);
 void print_result(void);
 
 int main(void) {
-	int i;
 	for(;;){
 		read_cards();
 		analyze_hand();
@@ -30,19 +26,25 @@ int main(void) {
 }
 
 void read_cards(void){
+	bool card_exists[NUM_RANKS][NUM_SUITS];
 	char ch, rank_ch, suit_ch;
-	int rank, suit, i, j;
-	bool bad_card, card_exists;
+	int rank, suit;
+	bool bad_card;
 	int cards_read = 0;
 
-	// clear state
-	for(i = 0; i < NUM_CARDS; i++)
-		hand[i][0] = 0, hand[i][1] = 0;
+	for(rank = 0; rank < NUM_RANKS; rank++) {
+		num_in_rank[rank] = 0;
+		for(suit = 0; suit < NUM_SUITS; suit++){
+			card_exists[rank][suit] = false;
+		}
+	}
+
+	for(suit = 0; suit < NUM_SUITS; suit++){
+		num_in_suit[suit] = 0;
+	}
 
 	while(cards_read < NUM_CARDS) {
 		bad_card = false;
-		card_exists = false;
-		
 
 		printf("Enter a card: ");
 
@@ -80,109 +82,50 @@ void read_cards(void){
 		while((ch = getchar()) != '\n')
 			if(ch != ' ') bad_card = true;
 
-		for(i = 0; i < NUM_CARDS; i++)
-			if(hand[i][0] == rank && hand[i][1] == suit)
-				card_exists = true;
-					
-
 		if(bad_card)
 			printf("Bad card; ignored.\n");
-		else if (card_exists)
+		else if (card_exists[rank][suit])	
 			printf("Duplicate card; ignored.\n");
 		else {
-			hand[cards_read][0] = rank;
-			hand[cards_read][1] = suit;
+			num_in_rank[rank]++;
+			num_in_suit[suit]++;
+			card_exists[rank][suit] = true;
 			cards_read++;
 		}
 	}
-
 }
 
 void analyze_hand(void){
-	int num_consec = 0, lowest, temp[2],
-	rank, suit, i, j, suit_amount, prev_rank, 
-	rank_amount, pairs_already_was = 0;
-	bool four_already_was = false, three_already_was = false;
+	int num_consec = 0;
+	int rank, suit;
+	bool possible_ace_low = false;
 	straight = false;
 	flush = false;
 	four = false;
 	three = false;
 	pairs = 0;
 
-	/* Sort by rank */
-	i = 0;
-	while(1){
-		lowest = i;
-		for(j = i; j < NUM_CARDS; j++)
-			if(hand[j][0] < hand[lowest][0]) lowest = j;
-
-		/* swap lowest */
-		temp[0] = hand[i][0];
-		temp[1] = hand[i][1];
-
-		hand[i][0] = hand[lowest][0];
-		hand[i][1] = hand[lowest][1];
-
-		hand[lowest][0] = temp[0];
-		hand[lowest][1] = temp[1];
-
-		if(i == NUM_CARDS) break;
-		i++;
-	}
-
 	/* check for flush */
-	for(suit = 0; suit < NUM_SUITS; suit++){
-		suit_amount = 0;
-
-		for(i = 0; i < NUM_CARDS; i++)
-			if(hand[i][1] == suit)	suit_amount++;
-
-		if(suit_amount == NUM_CARDS) flush = true;
-	}
+	for(suit = 0; suit < NUM_SUITS; suit++)
+		if(num_in_suit[suit] == NUM_CARDS)
+			flush = true;
 
 	/* check for straight */
 	rank = 0;
 	while(num_in_rank[rank] == 0) rank++;
+	if(rank == 0) possible_ace_low = true;
 	for(;rank < NUM_RANKS && num_in_rank[rank] > 0; rank++)
 		num_consec++;
-	if(num_consec == NUM_CARDS) {
+	if(num_consec == NUM_CARDS || (num_consec == NUM_CARDS - 1 && num_in_rank[NUM_RANKS - 1] == 1)) {
 		straight = true;
 		return;
-	}	
-
-	for(i = 0; i < NUM_CARDS; i++){
-		if(hand[i][0] == prev_rank + 1 || i == 0) num_consec++;
-		prev_rank = hand[i][0];
-	}
-	if(num_consec == NUM_CARDS) {
-		straight = true;
-		return;
-	}	
-
+	} 
+			
 	/* check for 4-of-a-kind 3-of-a-kind and pairs */
-        for(rank = 0; rank < NUM_RANKS; rank++) {
-		rank_amount = 0;
-		if(four) four_already_was = true;
-		if(three) three_already_was = true;
-		if(pairs) pairs_already_was = pairs;
-
-		for(i = 0; i < NUM_CARDS; i++) { 
-			if (hand[i][0] == rank) {
-				++rank_amount;
-				if (rank_amount == 2) pairs++;
-
-				if (rank_amount == 4 && three_already_was) 
-					four = true;
-				else if (rank_amount == 4)
-					four = true, three = false;
-
-				if (rank_amount == 3 && pairs_already_was)
-					three = true, pairs = pairs_already_was;
-				else if (rank_amount == 3)
-					three = true, pairs = 0;
-
-			}
-		}
+	for (rank = 0; rank < NUM_RANKS; rank++) {
+		if (num_in_rank[rank] == 4) four = true;
+		if (num_in_rank[rank] == 3) three = true;
+		if (num_in_rank[rank] == 2) pairs++;
 	}
 }
 
