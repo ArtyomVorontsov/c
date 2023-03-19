@@ -1,4 +1,3 @@
-
 #include <stdio.h>
 #define N 7
 
@@ -21,30 +20,34 @@ int main(void){
 void quicksort(int *a, int *low, int *high){
 	int *middle;
 
-	printf("low: %d \n", *low);
 	if(low >= high) return;
+	
 	middle = split(a, low, high);
-	printf("%d %d\n", *middle, *low);
 	quicksort(a, low, middle - 1);
 	quicksort(a, middle + 1, high);
 }
 
 int *split(int *a, int *low, int *high){
-	int part_element = *low;
+	int m = *low;
 
-	for(;;){
-		while(low < high && part_element <= *high)
+	printf("%d\n", m);
+
+	for(;;)	{
+		while(m <= *high && high != low)
 			high--;
-		if(low >= high) break;
+
+		if(high == low) break;
 		*(low++) = *high;
 
-		while(low < high && part_element >= *low)
+		while(m >= *low && high != low)
 			low++;
-		if(low >= high) break;
+
+		if(high == low) break;
 		*(high--) = *low;
 	}
 
-	*high = part_element;
+	*high = m;
+
 	return high;
 }
 
