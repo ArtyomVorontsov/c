@@ -201,6 +201,37 @@ void CuAssertStrEquals_LineMsg(CuTest* tc, const char* file, int line, const cha
 	CuStringAppend(&string, ">");
 	CuFailInternal(tc, file, line, &string);
 }
+/* Custom */
+void CuAssertStrArrayEquals_LineMsg(CuTest* tc, const char* file, int line, const char* message, 
+	const char** expected, const char** actual, int array_length)
+{
+	CuString string;
+	for(int i = 0; i < array_length; i++){
+		if ((expected == NULL && actual == NULL) ||
+		    (expected != NULL && actual != NULL &&
+		     strcmp(expected[i], actual[i]) == 0))
+		{
+			continue;
+		}
+
+		CuStringInit(&string);
+		if (message != NULL) 
+		{
+			CuStringAppend(&string, message);
+			CuStringAppend(&string, ": ");
+		}
+		char buf[100];
+		sprintf(buf, "Element %d is not matched\n", i);
+		CuStringAppend(&string, buf);
+		CuStringAppend(&string, "expected <");
+		CuStringAppend(&string, expected[i]);
+		CuStringAppend(&string, "> but was <");
+		CuStringAppend(&string, actual[i]);
+		CuStringAppend(&string, ">");
+		CuFailInternal(tc, file, line, &string);
+	}
+	return;
+}
 
 void CuAssertIntEquals_LineMsg(CuTest* tc, const char* file, int line, const char* message, 
 	int expected, int actual)

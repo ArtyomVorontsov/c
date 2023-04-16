@@ -71,6 +71,10 @@ void CuAssertDblEquals_LineMsg(CuTest* tc,
 void CuAssertPtrEquals_LineMsg(CuTest* tc, 
 	const char* file, int line, const char* message, 
 	void* expected, void* actual);
+/* Custom */
+void CuAssertStrArrayEquals_LineMsg(CuTest* tc,
+	       	const char* file, int line, const char* message, 
+	const char** expected, const char** actual, int array_length);
 
 /* public assert functions */
 
@@ -89,6 +93,8 @@ void CuAssertPtrEquals_LineMsg(CuTest* tc,
 
 #define CuAssertPtrNotNull(tc,p)        CuAssert_Line((tc),__FILE__,__LINE__,"null pointer unexpected",(p != NULL))
 #define CuAssertPtrNotNullMsg(tc,msg,p) CuAssert_Line((tc),__FILE__,__LINE__,(msg),(p != NULL))
+/* Custom */
+#define CuAssertStrArrayEquals(tc,ex,ac,al)           CuAssertStrArrayEquals_LineMsg((tc),__FILE__,__LINE__,NULL,(ex),(ac),(al))
 
 /* CuSuite */
 
