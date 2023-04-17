@@ -1,6 +1,6 @@
 FILE := $(wildcard *.c)
 OUTPUT_FILE := $(subst .c,.out,${FILE}) 
-TEST_FLAG_DATA := if(argc > 1){ if(strcmp(argv[1], "--test") == 0){ RunAllTests(); return 0; }; printf("Not supported parameter(s) is(are) passed\\n"); return 1; }
+TEST_FLAG_DATA := if(argc > 1){ if(strcmp(argv[1], "--test") == 0){ RunAllTests(); return 0; }; printf("Not supported parameter(s) is(are) passed\\n"); }
 
 ${OUTPUT_FILE}:
 	touch buffer.c
@@ -10,5 +10,5 @@ ${OUTPUT_FILE}:
 	rm -f buffer.c
 
 clean:
-	rm -f ${OUTPUT_FILE}
+	rm -f ${OUTPUT_FILE} buffer.c
 

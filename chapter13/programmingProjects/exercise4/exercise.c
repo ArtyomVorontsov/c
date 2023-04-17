@@ -1,26 +1,33 @@
 #include "../../../lib/cutest-1.5/CuTest.h"
 #include <string.h>
 #include <stdio.h>
+#define MAX_ARGUMENT_AMOUNT 100
 void RunAllTests(void);
-char **reverse_flags(int argc, char **argv);
+const char **reverse_flags(int argc, char **argv, const char **r_argv);
 
-char *r_argv[3];
 
 
 int main(int argc, char *argv[]){
-	TEST_FLAG
+	const char *r_argv[argc];
 
-	reverse_flags(argc, argv);
+	TEST_FLAG	
+
+	reverse_flags(argc, argv, r_argv);
+
+	for(int i = 0; i < argc - 1; i++)
+		printf("%s ", r_argv[i]);
+
+	printf("\n");
 
 	return 0;
 }
 
-char **reverse_flags(int argc, char **argv){
-	for(int i = 0; i < 3; i++)
-		r_argv[i] = "abc";
+const char **reverse_flags(int argc, char **argv, const char **r_argv){
+	int argcount = argc - 1;
+	char **a = argv;
 
-	for(int i = 0; i < 3; i++)
-		printf("%s\n", r_argv[i]);
+	for(int i = 0; i < argcount; i++)
+		r_argv[i] = a[argcount - i];
 
 	return r_argv;
 }
@@ -38,11 +45,15 @@ CuSuite *exercise4_chapter13_getSuite(void){
 
 // happy
 void reverse_flags_test(CuTest *tc){
-	int arg_amount = 3;
-	const char *input[3] = {"void", "and", "null"};
-	const char *expected[3] = {"void", "and", "lol"};
+	int argc = 4;
+	int argcount = 3;
+	char *input[] = {"program_name", "void", "and", "null"};
 
+	const char *actual[argc];
+	const char *expected[] = {"null", "and", "void"};
 
-	CuAssertStrArrayEquals(tc, input, expected, arg_amount);
+	reverse_flags(argc, input, actual);
+
+	CuAssertStrArrayEquals(tc, expected, actual, argcount);
 }
 
