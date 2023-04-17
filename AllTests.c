@@ -1,7 +1,7 @@
 #include "./lib/cutest-1.5/CuTest.h"
 #include <stdio.h>
 
-CuSuite *exercise4_chapter13_getSuite();
+CuSuite *exercise5_chapter13_getSuite();
 
 void RunAllTests(void) {
 	// Create output buffer
@@ -10,7 +10,7 @@ void RunAllTests(void) {
 	CuSuite *suite = CuSuiteNew();
 
 	// Assign function which is tested to suite
-	CuSuiteAddSuite(suite, exercise4_chapter13_getSuite());
+	CuSuiteAddSuite(suite, exercise5_chapter13_getSuite());
 
 	// Run all suites
 	CuSuiteRun(suite);
