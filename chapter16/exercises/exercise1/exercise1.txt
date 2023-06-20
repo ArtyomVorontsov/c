@@ -1,0 +1,2 @@
+1. Yes, this is correct syntax for structure declaration in c, therefore we can have that structure on individual basis.
+2. Yes, each structure have it's own namespace, therefore we can have the same names inside different structures.
